@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import pdfParse from 'pdf-parse';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env
@@ -187,23 +187,21 @@ async function descriptionToMarkdown(description: string): Promise<string> {
     }
 }
 
+interface OpenAIResponse {
+    choices: { message: { content: string } }[];
+}
+
 async function callOpenAI(model: string, systemMessage: string, prompt: string, temperature: number = 0.0): Promise<string> {
     try {
-        const response = await axios.post(
+        const response = await axios.post<OpenAIResponse>(
             'https://api.openai.com/v1/chat/completions',
             {
-                model: model,
+                model,
                 messages: [
-                    {
-                        role: 'system',
-                        content: systemMessage
-                    },
-                    {
-                        role: 'user',
-                        content: prompt
-                    }
+                    { role: 'system', content: systemMessage },
+                    { role: 'user', content: prompt }
                 ],
-                max_tokens: 1000,
+                max_tokens: 16000,
                 temperature
             },
             {
@@ -215,17 +213,24 @@ async function callOpenAI(model: string, systemMessage: string, prompt: string, 
         );
 
         return response.data.choices[0].message.content;
-    } catch (error: any) {
-        if (error.response) {
-            console.error('Error response from OpenAI API:', error.response.data);
-            console.error('Status code:', error.response.status);
-            console.error('Headers:', error.response.headers);
-        } else if (error.request) {
-            console.error('No response received from OpenAI API:', error.request);
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            handleAxiosError(error);
         } else {
-            console.error('Error in setting up request:', error.message);
+            console.error('Unexpected error:', error);
         }
-
         throw new Error('Failed when calling OpenAI API.');
+    }
+}
+
+function handleAxiosError(error: AxiosError): void {
+    if (error.response) {
+        console.error('Error response from OpenAI API:', error.response.data);
+        console.error('Status code:', error.response.status);
+        console.error('Headers:', error.response.headers);
+    } else if (error.request) {
+        console.error('No response received from OpenAI API:', error.request);
+    } else {
+        console.error('Error in setting up request:', error.message);
     }
 }
