@@ -1,7 +1,7 @@
 {
-  "name": "isbn-extractor",
+  "name": "book-pdf-to-obsidian-converter",
   "version": "1.0.0",
-  "description": "Extract ISBNs, Titles and Edition Numbers from PDF files",
+  "description": "Book PDF to Obsidian converter",
   "main": "dist/cli.js",
   "scripts": {
     "build": "tsc",
