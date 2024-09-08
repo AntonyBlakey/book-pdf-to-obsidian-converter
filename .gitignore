@@ -1,0 +1,5 @@
+.DS_Store
+.env
+/.devbox
+/node_modules
+/dist

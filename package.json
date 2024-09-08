@@ -1,0 +1,24 @@
+{
+  "name": "isbn-extractor",
+  "version": "1.0.0",
+  "description": "Extract ISBNs, Titles and Edition Numbers from PDF files",
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/pdf-parse": "^1.1.4",
+    "typescript": "^5.5.4"
+  }
+}
